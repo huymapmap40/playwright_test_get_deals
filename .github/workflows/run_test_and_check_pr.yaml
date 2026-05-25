@@ -10,5 +10,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Install dependencies
+        run: yarn install
       - name: Run tests
         run: yarn test --grep "@ID_1" --headed
