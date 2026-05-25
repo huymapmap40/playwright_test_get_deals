@@ -4,6 +4,7 @@
   "private": true,
   "description": "Playwright + TypeScript end-to-end tests for getdeals247.com",
   "scripts": {
+    "playwright:install": "playwright install",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
