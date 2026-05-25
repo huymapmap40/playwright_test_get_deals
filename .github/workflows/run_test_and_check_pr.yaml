@@ -1,0 +1,14 @@
+name: Run Test and Check PR
+run-name: Run GHA by @${{github.actor}}
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run tests
+        run: yarn test --grep "@ID_1" --headed
