@@ -1,0 +1,26 @@
+name: Run Test and Check PR
+run-name: Run GHA by @${{github.actor}}
+on:
+  pull_request:
+    branches:
+      - main
+env:
+  TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL}}
+  TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD}}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies and browsers
+        run: |
+          yarn install
+          yarn playwright:install
+      - name: Check env var is configured
+        run: |
+          echo "TEST_USER_EMAIL: $TEST_USER_EMAIL"
+          echo "TEST_USER_PASSWORD: $TEST_USER_PASSWORD"
+      - name: Run tests
+        run: |
+          yarn test --grep "@ID_1"
