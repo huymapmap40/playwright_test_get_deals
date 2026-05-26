@@ -7,12 +7,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL}}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install dependencies
-        run: yarn install
-      - name: Install browsers
-        run: yarn playwright:install
+      - name: Install dependencies and browsers
+        run: |
+          yarn install
+          yarn playwright:install
+      - name: Check env var is configured
+        run: |
+          echo "TEST_USER_EMAIL: $TEST_USER_EMAIL"
+          echo "TEST_USER_PASSWORD: $TEST_USER_PASSWORD"
       - name: Run tests
-        run: yarn test --grep "@ID_1"
+        run: |
+          yarn test --grep "@ID_1"
