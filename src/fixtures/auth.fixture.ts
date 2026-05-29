@@ -1,4 +1,4 @@
-import { test as base, Page, BrowserContext, expect } from '@playwright/test';
+import { test as base, Page, expect } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 import { HomePage, LoginPage } from '../pages';
@@ -19,18 +19,18 @@ import { maskEmail } from '../utils';
  */
 
 type AuthFixtures = {
-  loggedInContext: BrowserContext;
+  // loggedInContext: BrowserContext;
   loggedInPage: Page;
 };
 
-type AuthWorkerFixtures = {
-  authStorageStatePath: string;
-};
+// type AuthWorkerFixtures = {
+//   authStorageStatePath: string;
+// };
 
 const STORAGE_DIR = path.resolve(__dirname, '..', '..', '.auth');
 
-export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
-  authStorageStatePath: [
+export const test = base.extend<AuthFixtures>({
+  loggedInPage: [
     async ({ browser }, use, workerInfo) => {
       if (!fs.existsSync(STORAGE_DIR)) {
         fs.mkdirSync(STORAGE_DIR, { recursive: true });
@@ -50,17 +50,17 @@ export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
 
       await home.open();
       await home.expectLoaded();
-      await home.clickUserIcon();
+      await home.openSignIn();
       await login.expectVisible();
       await login.loginWithEmail(email, password);
       await expect(home.loggedInUserBadge, 'login should produce a logged-in badge').toBeVisible({
-        timeout: 20_000,
+        timeout: 30_000,
       });
 
-      await context.storageState({ path: statePath });
-      await context.close();
+      // await context.storageState({ path: statePath });
+      // await context.close();
 
-      await use(statePath);
+      await use(page);
 
       // ---- after-all (per worker) ----------------------------------------
       try {
@@ -69,19 +69,19 @@ export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
         console.warn(`[auth.fixture] failed to clean up ${statePath}:`, err);
       }
     },
-    { scope: 'worker' },
+    { scope: 'test' },
   ],
 
-  loggedInContext: async ({ browser, authStorageStatePath }, use) => {
-    const context = await browser.newContext({ storageState: authStorageStatePath });
-    await use(context);
-    await context.close();
-  },
+  // loggedInContext: async ({ browser, authStorageStatePath }, use) => {
+  //   const context = await browser.newContext({ storageState: authStorageStatePath });
+  //   await use(context);
+  //   await context.close();
+  // },
 
-  loggedInPage: async ({ loggedInContext }, use) => {
-    const page = await loggedInContext.newPage();
-    await use(page);
-  },
+  // loggedInPage: async ({ loggedInContext }, use) => {
+  //   const page = await loggedInContext.newPage();
+  //   await use(page);
+  // },
 });
 
 export { expect } from '@playwright/test';

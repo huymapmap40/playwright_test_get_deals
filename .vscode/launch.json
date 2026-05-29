@@ -14,8 +14,8 @@
             "args": [
               "test",
               "tests/login.spec.ts",
-              "--grep",
-              "user can log in with email and password",
+              // "--grep",
+              // "@ID_2",
             //   "--region",
             //   "ag1",
               "--headed",
@@ -23,7 +23,7 @@
             "env": {
                 "BASE_URL": "https://getdeals247.com",
                 "TEST_USER_EMAIL": "huyquocnguyen532@gmail.com",
-                "TEST_USER_PASSWORD": "<password>"
+                "TEST_USER_PASSWORD": "zaqwsxcdE12@"
             }
           },
     ]

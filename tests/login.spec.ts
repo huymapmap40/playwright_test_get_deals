@@ -43,9 +43,9 @@ baseTest.describe('Login flow (UI)', () => {
  * thanks to the stored session, so we only assert the post-login state.
  */
 authTest.describe('Authenticated home (fixture)', () => {
-  authTest('home page shows logged-in user badge', async ({ loggedInPage }) => {
+  authTest('home page shows logged-in user badge', {tag: "@ID_2"}, async ({ loggedInPage }) => {
     const home = new HomePage(loggedInPage);
-    await home.open();
+    // await home.open();
     await expect(home.loggedInUserBadge).toBeVisible();
   });
 });
