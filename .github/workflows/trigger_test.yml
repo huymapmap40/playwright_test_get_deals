@@ -12,13 +12,13 @@ jobs:
     name: Run test cases
     runs-on: ubuntu-latest
     container:
-      image: huyquocnguyen532/playwright-get-deals:1.0.1
+      image: huyquocnguyen532/playwright-get-deals:1.0.2
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Execute test
         run: |
-          npx playwright test src/tests/sum.spec.ts --
+          npx playwright test tests/sum.spec.ts
       - name: Upload report data
         if: always()
         uses: actions/upload-artifact@v4

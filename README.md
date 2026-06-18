@@ -180,6 +180,63 @@ A pull request template lives at `.github/pull_request_template.md`.
 
 ---
 
+## Docker
+
+The suite ships with a [`Dockerfile`](Dockerfile) so it can run in a reproducible
+container (e.g. as a GitHub Actions job container).
+
+### What the Dockerfile does
+
+```dockerfile
+FROM node:20-bookworm-slim                       # slim Node base (not the 3-browser Playwright image)
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci                                       # install deps from the lockfile
+RUN npx playwright install --with-deps chromium  # install ONLY chromium + its OS libs
+COPY . .                                         # copy the test suite (node_modules excluded via .dockerignore)
+ENV CI=true                                      # Playwright CI mode (retries, 1 worker, forbidOnly)
+CMD ["npm", "test"]                              # default: run the full suite
+```
+
+Why a slim base instead of `mcr.microsoft.com/playwright`: the official image bundles
+chromium **+ firefox + webkit**, but this project only runs chromium, so installing just
+that one browser keeps the image roughly half the size (~1–1.3 GB vs ~2.5 GB).
+`.dockerignore` keeps the host's `node_modules`, `.env`, and reports out of the build.
+
+### Build the image
+
+```bash
+docker build -t playwright-get-deals .
+```
+
+> **Apple Silicon → CI:** `docker build` on an M-series Mac produces an **arm64**
+> image, which will **not start** on amd64 GitHub runners (the container exits
+> immediately). Build for the target platform with `buildx`:
+>
+> ```bash
+> # multi-arch (runs on both your Mac and amd64 CI), builds + pushes in one step:
+> docker buildx build --platform linux/amd64,linux/arm64 \
+>   -t <dockerhub-user>/playwright-get-deals:<tag> --push .
+> ```
+
+### Run the tests in a container
+
+```bash
+docker run --rm --env-file .env playwright-get-deals                       # full suite
+docker run --rm --env-file .env playwright-get-deals \
+  npx playwright test --grep "@ID_1"                                       # a single tag
+```
+
+Credentials are **not** baked into the image — they come from `.env` at run time
+via `--env-file`. A [`docker-compose.yml`](docker-compose.yml) is also provided:
+
+```bash
+docker compose run --rm tests                                              # full suite
+docker compose run --rm tests npx playwright test --grep "@ID_1"           # a single tag
+```
+
+---
+
 ## Troubleshooting
 
 - **Login test fails because a selector didn't match** — open

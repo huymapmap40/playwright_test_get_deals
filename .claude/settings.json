@@ -5,7 +5,9 @@
       "Bash(npx eslint *)",
       "Bash(echo \"exit: $?\")",
       "Bash(grep -E \"^\\\\.env$\")",
-      "Bash(git grep *)"
+      "Bash(git grep *)",
+      "Bash(docker manifest *)",
+      "Bash(echo \"---exit:$?---\")"
     ]
   },
   "hooks": {
