@@ -13,9 +13,9 @@
             "console": "integratedTerminal",
             "args": [
               "test",
-              "tests/login.spec.ts",
-              // "--grep",
-              // "@ID_2",
+              "tests/sum.spec.ts",
+              "--grep",
+              "Test sum",
             //   "--region",
             //   "ag1",
               "--headed",

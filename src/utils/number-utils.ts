@@ -11,6 +11,14 @@ export function parsePrice(value: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+/**
+ * Add two numbers. Trivial by design — used as a fast, network-free test
+ * subject for exercising Claude Code hooks.
+ */
+export function sum(a: number, b: number): number {
+  return a + b;
+}
+
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }

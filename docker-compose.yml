@@ -1,0 +1,16 @@
+services:
+  tests:
+    build: .
+    image: playwright-get-deals
+    # Credentials and config are read from .env at run time (git-ignored).
+    env_file:
+      - .env
+    environment:
+      CI: "true"
+    # Persist the HTML report and raw results on the host.
+    volumes:
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
+    # Default command runs the full suite; override on the CLI to target tags, e.g.
+    #   docker compose run --rm tests npx playwright test --grep "@ID_1"
+    command: ["npm", "test"]

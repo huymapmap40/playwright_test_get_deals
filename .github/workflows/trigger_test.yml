@@ -1,0 +1,31 @@
+name: Trigger Test
+run-name: Run test playwright - getdeals247
+
+on:
+  workflow_dispatch
+
+jobs:
+  run-tests:
+    name: Run test cases
+    runs-on: ubuntu-latest
+    container:
+      image: huyquocnguyen532/playwright-get-deals:1.0.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Execute test
+        run: |
+          npx playwright test src/tests/sum.spec.ts --
+      - name: Upload report data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-data
+          path: report/
+  report-test-result:
+      name: Publish report & notify Slack
+      needs: run-tests
+      if: always()
+      runs-on: ubuntu-latest
+
+
