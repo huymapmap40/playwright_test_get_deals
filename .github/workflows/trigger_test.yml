@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Execute test
-        run: npx playwright test tests/sum.spec.ts
+        run: npx playwright test tests/sum.spec.ts --reporter=html
       - name: Upload report data
         if: always()
         uses: actions/upload-artifact@v4
@@ -27,15 +27,36 @@ jobs:
           name: report-data
           path: |
             playwright-report
-            test-results
   report-test-result:
       name: Publish report & notify Slack
       needs: run-tests
       if: always()
       runs-on: ubuntu-latest
+      environment:
+        name: github_pages
+        url: ${{steps.deployment.outputs.page_url}}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
+        - name: Download artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: report-data
+            path: playwright-report
+
+        - name: Setup Pages
+          uses: actions/configure-pages@v5
+          with:
+            enablement: true   # auto-enable Pages (build type = GitHub Actions) on first run
+
+        - name: Upload Pages artifact
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: playwright-report
+
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
 
   notify-slack:
     name: Notify Slack Channel
