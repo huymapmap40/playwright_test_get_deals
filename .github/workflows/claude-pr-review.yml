@@ -41,10 +41,11 @@ jobs:
           # `claude setup-token` and store it as a repo secret.
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # Temporary: print Claude's full output so the real error is visible.
-          show_full_output: true
-          # Use the workflow's built-in token instead of the Claude GitHub App,
-          # so the App install / OIDC token exchange is not required.
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # show_full_output: true
+
+          # No github_token: the action mints a token from the Claude GitHub App
+          # via OIDC (requires the app installed on this repo + id-token: write).
+          # Comments are then authored by "claude" instead of github-actions[bot].
           # Drive the review entirely through the repo's /review-pr skill, so the
           # same checks run locally and in CI. The skill fetches the diff, runs
           # the five checks, and posts the result back to the PR.
