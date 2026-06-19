@@ -51,8 +51,11 @@ jobs:
           # the five checks, and posts the result back to the PR.
           prompt: |
             Run the /review-pr skill on pull request #${{ github.event.pull_request.number }}
-            in ${{ github.repository }}. Follow the skill exactly and post the
-            review back to the PR as a comment, even if everything passes.
+            in ${{ github.repository }}. Follow the skill exactly: post each
+            line-specific finding as an INLINE comment anchored to the changed
+            line it refers to (use the inline-comment tool), and post one summary
+            comment with the verdict + checks table. Comment even if everything
+            passes.
           # Tools the skill needs: read the diff, run lint, post comments.
           claude_args: |
             --model claude-opus-4-8

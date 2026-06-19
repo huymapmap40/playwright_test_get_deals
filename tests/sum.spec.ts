@@ -20,5 +20,6 @@ test.describe('Test sum', () => {
   test('Adds decimals', async ({myFixture, log}) => {
     log.info(`MyFixture return value ${myFixture}`)
     expect(sum(0.1, 0.2)).toBeCloseTo(0.3);
+    expect(sum(0.99, 0.01)).toBeCloseTo(1);
   });
 });

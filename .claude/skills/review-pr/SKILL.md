@@ -91,12 +91,26 @@ Tests are documentation; convoluted logic hides intent and breaks flakily.
 ## Step 3 — Report
 
 ### When posting to a PR
-Post one summary comment, and inline comments for specific lines where the tool
-allows. Always comment even if the PR is clean (say so) — silence reads as "the
-job didn't run". Use the GitHub CLI:
-```bash
-gh pr comment <number> --body "<markdown>"
-```
+Findings are most useful **anchored to the exact line that's wrong**, so a
+reviewer sees them in the diff rather than scrolling a wall of text.
+
+1. **Post each line-specific finding as an inline comment** using the
+   `mcp__github_inline_comment__create_inline_comment` tool, anchored to the
+   `file` and `line` you cited. GitHub only accepts inline comments on lines that
+   are part of the PR diff — so anchor to a **changed** line. If a finding is
+   about code outside the diff, fold it into the summary instead of forcing it
+   inline (the API will reject an out-of-diff line).
+2. **Post one summary comment** with the verdict and the Checks table via the CLI,
+   so there's a single top-level view of the result:
+   ```bash
+   gh pr comment <number> --body "<markdown summary>"
+   ```
+   Always post this summary even when the PR is clean (say so) — silence reads as
+   "the job didn't run".
+
+Keep the inline comment focused (what's wrong + the fix); don't repeat the full
+finding list inside the summary — the summary is the verdict + table + anything
+that couldn't be anchored to a line.
 
 ### Report format (use this structure)
 ```markdown
