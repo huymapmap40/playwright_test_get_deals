@@ -1,12 +1,12 @@
 # Slim Node base instead of the full Playwright image (which bundles 3 browsers).
 # This project only runs chromium, so we install just that one + its OS deps.
-FROM node:20-bookworm-slim
+FROM node:slim
 
 WORKDIR /app
 
-# Install dependencies first so this layer is cached unless the lockfile changes.
+# Install dependencies frst so this layer is cached unless the lockfile changes.
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install
 
 # Install ONLY chromium and its system libraries (firefox/webkit are unused).
 # --with-deps pulls the required apt packages; clean the apt cache afterward.
