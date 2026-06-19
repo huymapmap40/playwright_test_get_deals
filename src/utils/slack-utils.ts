@@ -1,19 +1,5 @@
 import { logger } from './logger';
 
-/**
- * Posts messages to Slack via the Web API (`chat.postMessage`), which lets us
- * target a specific channel at call time — unlike an incoming webhook, which is
- * bound to a single channel. Auth uses a bot token so the message is attributed
- * to the app and can post to any channel the bot is a member of.
- *
- * Required env var:
- *   SLACK_BOT_TOKEN        bot token, starts with `xoxb-`
- * Optional env var:
- *   SLACK_DEFAULT_CHANNEL  channel used when a call omits one (id like `C0123` or name `#qa-alerts`)
- *
- * The bot must be invited to a channel before it can post there
- * (`/invite @your-bot`), otherwise Slack returns `not_in_channel`.
- */
 
 const SLACK_POST_MESSAGE_URL = 'https://slack.com/api/chat.postMessage';
 const SLACK_DEFAULT_CHANNEL = process.env.SLACK_DEFAULT_CHANNEL ?? 'automation-test-getdeals247'

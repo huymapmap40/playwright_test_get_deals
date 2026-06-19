@@ -97,7 +97,11 @@ jobs:
           SLACK_DEFAULT_CHANNEL: automation-test-getdeals247
           TEST_RESULT: ${{ needs.run-tests.result }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: npx tsx scripts/notify-slack.ts
+          BUILD_ID: ${{ github.run_id }}
+          AUTHOR: ${{github.actor}}
+        run: |
+          echo "Test result: $TEST_RESULT"
+          npx tsx scripts/notify-slack.ts
 
 
 
