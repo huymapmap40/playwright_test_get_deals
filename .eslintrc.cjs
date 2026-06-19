@@ -25,6 +25,7 @@ module.exports = {
     'playwright-report/',
     '*.js',
     '*.cjs',
+    'scripts/'
   ],
   rules: {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],

@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Execute test
-        run: npx playwright test tests/sum.spec.ts
+        run: npx playwright test tests/sum.spec.ts --reporter=html
       - name: Upload report data
         if: always()
         uses: actions/upload-artifact@v4
@@ -27,13 +27,66 @@ jobs:
           name: report-data
           path: |
             playwright-report
-            test-results
   report-test-result:
       name: Publish report & notify Slack
       needs: run-tests
       if: always()
       runs-on: ubuntu-latest
+      # Required by actions/deploy-pages: Pages write + OIDC token.
+      permissions:
+        pages: write
+        id-token: write
+        contents: read
+
+      environment:
+        name: github-pages
+        url: ${{steps.deployment.outputs.page_url}}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
+        - name: Download artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: report-data
+            path: playwright-report
+
+        - name: Setup Pages
+          uses: actions/configure-pages@v5
+          with:
+            enablement: true   # auto-enable Pages (build type = GitHub Actions) on first run
+
+        - name: Upload Pages artifact
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: playwright-report
+
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
+
+  notify-slack:
+    name: Notify Slack Channel
+    # Depend on run-tests too so we can read its result for the message.
+    needs: [run-tests, report-test-result]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Send message slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_DEFAULT_CHANNEL: automation-test-getdeals247
+          TEST_RESULT: ${{ needs.run-tests.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: npx tsx scripts/notify-slack.ts
+
+
 
