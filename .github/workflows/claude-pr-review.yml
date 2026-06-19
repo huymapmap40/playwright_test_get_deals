@@ -1,0 +1,40 @@
+name: Claude PR Review
+run-name: Claude reviews PR #${{ github.event.pull_request.number }}
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  review:
+    name: Review with Claude Code
+    runs-on: ubuntu-latest
+    # Permissions Claude needs to read the diff and post review comments.
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so Claude can diff against the base branch
+
+      - name: Run Claude Code review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # The prompt drives Claude. It invokes the repo's /code-review skill,
+          # which posts findings as inline comments on the PR (--comment mode).
+          prompt: |
+            Repo: ${{ github.repository }}
+            PR number: ${{ github.event.pull_request.number }}
+
+            Run /code-review high --comment on this pull request. Review for
+            correctness bugs, security issues, and violations of the project
+            conventions in CLAUDE.md (selectors-in-Page-Objects, unique @ID tags,
+            no test.only, masked emails). Post the findings as inline PR comments.
+          # Allow the GitHub CLI so the review can post comments on the PR.
+          claude_args: |
+            --allowedTools "Bash(gh pr:*),Bash(gh api:*)"
