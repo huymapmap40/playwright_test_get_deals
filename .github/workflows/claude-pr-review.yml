@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     # Permissions Claude needs to read the diff and post review comments.
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
       issues: write
       id-token: write
