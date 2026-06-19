@@ -32,6 +32,12 @@ jobs:
       needs: run-tests
       if: always()
       runs-on: ubuntu-latest
+      # Required by actions/deploy-pages: Pages write + OIDC token.
+      permissions:
+        pages: write
+        id-token: write
+        contents: read
+
       environment:
         name: github_pages
         url: ${{steps.deployment.outputs.page_url}}
