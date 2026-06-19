@@ -28,6 +28,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Temporary: print Claude's full output so the real error is visible.
+          show_full_output: true
           # Use the workflow's built-in token instead of the Claude GitHub App,
           # so the App install / OIDC token exchange is not required.
           github_token: ${{ secrets.GITHUB_TOKEN }}
