@@ -21,20 +21,39 @@ jobs:
         with:
           fetch-depth: 0 # full history so Claude can diff against the base branch
 
+      # Install deps so the review-pr skill's `npm run lint` check runs for real.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run Claude Code review
         uses: anthropics/claude-code-action@v1
+        # Give the gh CLI a token so Claude's `gh pr comment` calls authenticate.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          # The prompt drives Claude. It invokes the repo's /code-review skill,
-          # which posts findings as inline comments on the PR (--comment mode).
-          prompt: |
-            Repo: ${{ github.repository }}
-            PR number: ${{ github.event.pull_request.number }}
+          # Authenticate against your Claude subscription (Pro/Max) instead of
+          # pay-as-you-go API credits. Generate the token locally with
+          # `claude setup-token` and store it as a repo secret.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Temporary: print Claude's full output so the real error is visible.
+          # show_full_output: true
 
-            Run /code-review high --comment on this pull request. Review for
-            correctness bugs, security issues, and violations of the project
-            conventions in CLAUDE.md (selectors-in-Page-Objects, unique @ID tags,
-            no test.only, masked emails). Post the findings as inline PR comments.
-          # Allow the GitHub CLI so the review can post comments on the PR.
+          # No github_token: the action mints a token from the Claude GitHub App
+          # via OIDC (requires the app installed on this repo + id-token: write).
+          # Comments are then authored by "claude" instead of github-actions[bot].
+          # Drive the review entirely through the repo's /review-pr skill, so the
+          # same checks run locally and in CI. The skill fetches the diff, runs
+          # the five checks, and posts the result back to the PR.
+          prompt: |
+            Run the /review-pr skill on pull request #${{ github.event.pull_request.number }}
+            in ${{ github.repository }}. Follow the skill exactly and post the
+            review back to the PR as a comment, even if everything passes.
+          # Tools the skill needs: read the diff, run lint, post comments.
           claude_args: |
-            --allowedTools "Bash(gh pr:*),Bash(gh api:*)"
+            --model claude-opus-4-8
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(npm run lint),Bash(git diff:*),Bash(git grep:*),Bash(grep:*)"

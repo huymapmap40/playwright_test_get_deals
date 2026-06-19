@@ -6,6 +6,8 @@ on:
 
 env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  MONGODB_NAME: ${{vars.MONGODB_NAME}}
+  MONGODB_URI: ${{vars.MONGODB_URI}}
 
 jobs:
   run-tests:

@@ -7,7 +7,28 @@
       "Bash(grep -E \"^\\\\.env$\")",
       "Bash(git grep *)",
       "Bash(docker manifest *)",
-      "Bash(echo \"---exit:$?---\")"
+      "Bash(echo \"---exit:$?---\")",
+      "Edit(/.claude/skills/review-pr/**)",
+      "Edit(/.claude/skills/review-pr-workspace/**)",
+      "Bash(cp .claude/skills/review-pr-workspace/inputs/eval-0-pom-and-tag/deals.spec.ts tests/deals.spec.ts)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(cp .claude/skills/review-pr-workspace/inputs/eval-1-secret-and-floating-promise/checkout.spec.ts tests/checkout.spec.ts)",
+      "Bash(echo \"---EXIT $?---\")",
+      "Bash(cp \".claude/skills/review-pr-workspace/inputs/eval-1-secret-and-floating-promise/checkout.spec.ts\" tests/checkout.spec.ts && npx eslint tests/checkout.spec.ts 2>&1 | head -40; rm tests/checkout.spec.ts)",
+      "Bash(mkdir -p /Users/huymapmap40/LamViec/automation/playwright_test_get_deals/.claude/skills/review-pr-workspace/iteration-1/eval-0-pom-and-tag/with_skill/outputs)",
+      "Bash(cp \".claude/skills/review-pr-workspace/inputs/eval-1-secret-and-floating-promise/checkout.spec.ts\" tests/checkout.spec.ts && npx eslint tests/checkout.spec.ts; echo \"EXIT:$?\"; rm -f tests/checkout.spec.ts)",
+      "Bash(cp .claude/skills/review-pr-workspace/inputs/eval-2-clean/DealsPage.ts src/pages/DealsPage.ts)",
+      "Bash(cp .claude/skills/review-pr-workspace/inputs/eval-2-clean/deals.spec.ts tests/deals.spec.ts)",
+      "Bash(npm run *)",
+      "Bash(mkdir -p \"/Users/huymapmap40/LamViec/automation/playwright_test_get_deals/.claude/skills/review-pr-workspace/iteration-1/eval-1-secret-and-floating-promise/without_skill/outputs\")",
+      "Bash(ESLINT_USE_FLAT_CONFIG=false npx eslint tests/deals.spec.ts --ext .ts)",
+      "Bash(mkdir -p /Users/huymapmap40/LamViec/automation/playwright_test_get_deals/.claude/skills/review-pr-workspace/iteration-1/eval-2-clean/without_skill/outputs)"
+    ],
+    "additionalDirectories": [
+      "/Users/huymapmap40/LamViec/automation/playwright_test_get_deals/.claude/skills/review-pr-workspace/inputs/eval-1-secret-and-floating-promise",
+      "/Users/huymapmap40/LamViec/automation/playwright_test_get_deals/.claude/skills/review-pr-workspace/iteration-1/eval-0-pom-and-tag/with_skill",
+      "/Users/huymapmap40/LamViec/automation/playwright_test_get_deals/.claude/skills/review-pr-workspace/iteration-1/eval-1-secret-and-floating-promise/without_skill",
+      "/Users/huymapmap40/LamViec/automation/playwright_test_get_deals/.claude/skills/review-pr-workspace/iteration-1/eval-2-clean/without_skill"
     ]
   },
   "hooks": {
