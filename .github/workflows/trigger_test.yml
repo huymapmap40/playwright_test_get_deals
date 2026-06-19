@@ -12,7 +12,7 @@ jobs:
     name: Run test cases
     runs-on: ubuntu-latest
     container:
-      image: huyquocnguyen532/playwright-get-deals:1.0.2
+      image: huyquocnguyen532/playwright-get-deals:1.0.3
     steps:
       - name: Checkout
         uses: actions/checkout@v4
