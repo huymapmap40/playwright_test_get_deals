@@ -37,3 +37,29 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v4
 
+  notify-slack:
+    name: Notify Slack Channel
+    # Depend on run-tests too so we can read its result for the message.
+    needs: [run-tests, report-test-result]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Send message slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_DEFAULT_CHANNEL: automation-test-getdeals247
+          TEST_RESULT: ${{ needs.run-tests.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: npx tsx scripts/notify-slack.ts
+
+
+
