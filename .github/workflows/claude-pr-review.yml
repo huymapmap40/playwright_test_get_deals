@@ -25,6 +25,9 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Use the workflow's built-in token instead of the Claude GitHub App,
+          # so the App install / OIDC token exchange is not required.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           # The prompt drives Claude. It invokes the repo's /code-review skill,
           # which posts findings as inline comments on the PR (--comment mode).
           prompt: |
