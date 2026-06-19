@@ -21,6 +21,15 @@ jobs:
         with:
           fetch-depth: 0 # full history so Claude can diff against the base branch
 
+      # Install deps so the review-pr skill's `npm run lint` check runs for real.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run Claude Code review
         uses: anthropics/claude-code-action@v1
         # Give the gh CLI a token so Claude's `gh pr comment` calls authenticate.
@@ -36,19 +45,14 @@ jobs:
           # Use the workflow's built-in token instead of the Claude GitHub App,
           # so the App install / OIDC token exchange is not required.
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Drive the review entirely through the repo's /review-pr skill, so the
+          # same checks run locally and in CI. The skill fetches the diff, runs
+          # the five checks, and posts the result back to the PR.
           prompt: |
-            Repo: ${{ github.repository }}
-            PR number: ${{ github.event.pull_request.number }}
-
-            1. Get the diff:  gh pr diff ${{ github.event.pull_request.number }}
-            2. Review it for correctness bugs, security issues, and violations of
-               the project conventions in CLAUDE.md (selectors live in Page Objects,
-               unique @ID tags, no test.only, masked emails).
-            3. You MUST post your review back to the PR with the gh CLI, e.g.:
-                 gh pr comment ${{ github.event.pull_request.number }} --body "<your markdown review>"
-               If there are no issues, still post a short comment saying the review
-               passed. Do not finish without posting a comment.
-          # Allow the GitHub CLI so the review can read the diff and post comments.
+            Run the /review-pr skill on pull request #${{ github.event.pull_request.number }}
+            in ${{ github.repository }}. Follow the skill exactly and post the
+            review back to the PR as a comment, even if everything passes.
+          # Tools the skill needs: read the diff, run lint, post comments.
           claude_args: |
             --model claude-opus-4-8
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(npm run lint),Bash(git diff:*),Bash(git grep:*),Bash(grep:*)"
