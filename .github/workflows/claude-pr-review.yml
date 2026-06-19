@@ -23,21 +23,26 @@ jobs:
 
       - name: Run Claude Code review
         uses: anthropics/claude-code-action@v1
+        # Give the gh CLI a token so Claude's `gh pr comment` calls authenticate.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           # Use the workflow's built-in token instead of the Claude GitHub App,
           # so the App install / OIDC token exchange is not required.
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # The prompt drives Claude. It invokes the repo's /code-review skill,
-          # which posts findings as inline comments on the PR (--comment mode).
           prompt: |
             Repo: ${{ github.repository }}
             PR number: ${{ github.event.pull_request.number }}
 
-            Run /code-review high --comment on this pull request. Review for
-            correctness bugs, security issues, and violations of the project
-            conventions in CLAUDE.md (selectors-in-Page-Objects, unique @ID tags,
-            no test.only, masked emails). Post the findings as inline PR comments.
-          # Allow the GitHub CLI so the review can post comments on the PR.
+            1. Get the diff:  gh pr diff ${{ github.event.pull_request.number }}
+            2. Review it for correctness bugs, security issues, and violations of
+               the project conventions in CLAUDE.md (selectors live in Page Objects,
+               unique @ID tags, no test.only, masked emails).
+            3. You MUST post your review back to the PR with the gh CLI, e.g.:
+                 gh pr comment ${{ github.event.pull_request.number }} --body "<your markdown review>"
+               If there are no issues, still post a short comment saying the review
+               passed. Do not finish without posting a comment.
+          # Allow the GitHub CLI so the review can read the diff and post comments.
           claude_args: |
-            --allowedTools "Bash(gh pr:*),Bash(gh api:*)"
+            --allowedTools "Bash(gh pr diff:*),Bash(gh pr comment:*),Bash(gh pr view:*),Bash(gh api:*)"
