@@ -36,7 +36,7 @@ export class HomePage extends BasePage {
   }
 
   async expectLoaded(): Promise<void> {
-    await expect(this.page).toHaveURL(/getdeals247\.com/);
+    await expect(this.page).toHaveURL(/get-deals\.vercel\.app/);
     await this.expectVisible(this.userIconButton, 'top-right user icon should be visible');
   }
 

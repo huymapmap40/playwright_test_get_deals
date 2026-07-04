@@ -1,4 +1,5 @@
-name: Post deployment test e2e get-deals.vercel.app
+name: Post deployment test e2e
+run-name: Trigger by deployment of get-deals repository
 on:
   repository_dispatch:
     types: [vercel-deploy-success]
@@ -12,6 +13,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Summary Test run information
+        run: |
+          echo "### Triggered by get-deals deploy" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: [${{ github.event.client_payload.sha }}](${{ github.event.client_payload.commit_url }})" >> "$GITHUB_STEP_SUMMARY"
+          echo "Deployed URL: ${{github.event.client_payload.url}}" >> "$GITHUB_STEP_SUMMARY"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run test
