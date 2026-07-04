@@ -14,7 +14,7 @@ description: >-
 # Review PR
 
 You are reviewing changes in a Playwright + TypeScript E2E test repo for
-getdeals247.com. The point of this skill is consistency: every PR should be held
+get-deals.vercel.app. The point of this skill is consistency: every PR should be held
 to the same five checks, whether a human runs `/review-pr` locally or the CI
 workflow invokes it. Be concrete and cite `file:line` so findings are actionable.
 

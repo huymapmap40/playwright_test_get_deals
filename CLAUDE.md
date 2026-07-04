@@ -24,7 +24,7 @@ npx playwright test --grep "@ID_1"                 # run a single test by tag
 npx playwright test -g "user can log in"           # run by title substring
 
 npm run report                    # open the HTML report from the last run
-npm run codegen                   # record selectors against getdeals247.com
+npm run codegen                   # record selectors against get-deals.vercel.app
 
 npm run lint                      # eslint
 npm run typecheck                 # tsc --noEmit

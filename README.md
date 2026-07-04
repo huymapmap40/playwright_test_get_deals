@@ -1,6 +1,6 @@
 # playwright-test-get-deals
 
-End-to-end UI tests for [getdeals247.com](https://getdeals247.com), built with
+End-to-end UI tests for [get-deals.vercel.app](https://get-deals.vercel.app), built with
 [Playwright](https://playwright.dev/) + TypeScript.
 
 The project is structured around the Page Object Model (POM): page locators
@@ -92,7 +92,7 @@ npm run report             # open the HTML report from the last run
 | `npm run test:firefox`       | Run only the Firefox project                           |
 | `npm run test:webkit`        | Run only the WebKit project                            |
 | `npm run report`             | Open the last HTML report                              |
-| `npm run codegen`            | Open Playwright codegen against getdeals247.com        |
+| `npm run codegen`            | Open Playwright codegen against get-deals.vercel.app   |
 | `npm run install:browsers`   | Install Playwright browser binaries + OS deps          |
 | `npm run lint`               | ESLint over the whole project                          |
 | `npm run lint:fix`           | ESLint with `--fix`                                    |
@@ -106,7 +106,7 @@ npm run report             # open the HTML report from the last run
 
 The default suite (`tests/login.spec.ts`) covers:
 
-1. Navigate to `https://getdeals247.com`.
+1. Navigate to `https://get-deals.vercel.app`.
 2. Click the user icon at the top-right corner.
 3. Assert the login page is shown.
 4. Choose the **Login with email & password** option.
@@ -116,7 +116,7 @@ The default suite (`tests/login.spec.ts`) covers:
 
 > **Selectors note.** The Page Objects use accessibility-first locators
 > (`getByRole`, `getByLabel`, `getByPlaceholder`) with CSS fallbacks.
-> If getdeals247.com changes its markup or copy, adjust the regexes in
+> If get-deals.vercel.app changes its markup or copy, adjust the regexes in
 > `src/pages/HomePage.ts` and `src/pages/LoginPage.ts` — the test code
 > itself should stay unchanged.
 

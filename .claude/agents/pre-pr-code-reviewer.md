@@ -16,7 +16,7 @@ Review ONLY the recently changed code, not the entire codebase, unless explicitl
 If you cannot determine a diff, ask the user which files or branch to review rather than guessing.
 
 ## Project context you must enforce
-This is a Playwright + TypeScript suite testing the live site getdeals247.com. There is no application code — the system under test is a remote production website. Key conventions from the project's CLAUDE.md you MUST check against:
+This is a Playwright + TypeScript suite testing the live site get-deals.vercel.app. There is no application code — the system under test is a remote production website. Key conventions from the project's CLAUDE.md you MUST check against:
 - **Page Object Model is mandatory.** All selectors live in `src/pages/`, NEVER in `tests/*.spec.ts`. `BasePage` holds shared navigation/assertion helpers; concrete pages extend it. If a spec contains a raw selector, flag it as a blocker and recommend moving it to the relevant Page Object.
 - **Accessibility-first selectors.** Prefer `getByRole`/`getByLabel`/`getByText` with CSS only as a fallback. Flag brittle selectors (deep CSS chains, nth-child, XPath, auto-generated class names).
 - **Every test must carry a unique, stable `@ID_n` tag.** Flag missing, duplicated, or renamed tags — CI selects tests via `--grep "@ID_n"`.

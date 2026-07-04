@@ -2,7 +2,7 @@
   "name": "playwright-test-get-deals",
   "version": "1.0.0",
   "private": true,
-  "description": "Playwright + TypeScript end-to-end tests for getdeals247.com",
+  "description": "Playwright + TypeScript end-to-end tests for get-deals.vercel.app",
   "scripts": {
     "playwright:install": "playwright install",
     "test": "playwright test",
@@ -13,7 +13,7 @@
     "test:firefox": "playwright test --project=firefox",
     "test:webkit": "playwright test --project=webkit",
     "report": "playwright show-report",
-    "codegen": "playwright codegen https://getdeals247.com",
+    "codegen": "playwright codegen https://get-deals.vercel.app",
     "install:browsers": "playwright install --with-deps",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",

@@ -5,7 +5,7 @@ on:
     types: [vercel-deploy-success]
 
 env:
-  BASE_URL: ${{github.event.client_payload.url}}
+  BASE_URL: https://get-deals.vercel.app
   TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
   TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
@@ -15,9 +15,11 @@ jobs:
     steps:
       - name: Summary Test run information
         run: |
+          SHA=${{github.event.client_payload.sha}}
+          SHORT_SHA=${SHA::8}
           echo "### Triggered by get-deals deploy" >> "$GITHUB_STEP_SUMMARY"
-          echo "Commit: [${{ github.event.client_payload.sha }}](${{ github.event.client_payload.commit_url }})" >> "$GITHUB_STEP_SUMMARY"
-          echo "Deployed URL: ${{github.event.client_payload.url}}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: [${SHORT_SHA}](${{ github.event.client_payload.commit_url }})" >> "$GITHUB_STEP_SUMMARY"
+          echo "Environment URL: [${{ github.event.client_payload.environment_url }}](${{ github.event.client_payload.environment_url }})" >> "$GITHUB_STEP_SUMMARY"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run test

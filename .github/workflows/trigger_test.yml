@@ -1,5 +1,5 @@
 name: Trigger Test
-run-name: Run test playwright - getdeals247
+run-name: Run test playwright - get-deals
 
 on:
   workflow_dispatch
@@ -125,7 +125,7 @@ jobs:
       - name: Send message slack
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          SLACK_DEFAULT_CHANNEL: automation-test-getdeals247
+          SLACK_DEFAULT_CHANNEL: automation-test-get-deals
           TEST_RESULT: ${{ needs.run-tests.result }}
           STATUS_TEST: ${{ needs.run-tests.result }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
