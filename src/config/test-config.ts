@@ -12,7 +12,7 @@ function required(key: string): string {
 }
 
 export const testConfig = {
-  baseUrl: process.env.BASE_URL ?? 'https://getdeals247.com',
+  baseUrl: process.env.BASE_URL ?? 'https://get-deals.vercel.app',
   testUser: {
     get email(): string {
       return required('TEST_USER_EMAIL');

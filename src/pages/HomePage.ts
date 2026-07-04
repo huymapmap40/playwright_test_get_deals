@@ -2,7 +2,7 @@ import { Locator, Page, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 /**
- * HomePage = getdeals247.com landing page.
+ * HomePage = get-deals.vercel.app landing page.
  *
  * The selectors below favour accessibility-first queries (getByRole / aria-label),
  * which tend to survive minor markup changes. Adjust the regexes if the live

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Playwright + TypeScript end-to-end UI tests for the live site **getdeals247.com**.
+Playwright + TypeScript end-to-end UI tests for the live site **get-deals.vercel.app**.
 There is no application code here — the "system under test" is a remote website,
 so tests run against production over the network and depend on real credentials.
 
@@ -65,7 +65,7 @@ tests/*.spec.ts
 
 - **Two ways tests authenticate.** `tests/login.spec.ts` shows both:
   - `@ID_1` imports the bare `@playwright/test` runner (`baseTest`) and performs
-    the login interaction itself — this is the test *of* login.
+    the login interaction itself — this is the test _of_ login.
   - `@ID_2` imports `test` from `src/fixtures` and receives `loggedInPage`
     pre-authenticated — login is a precondition, not the thing under test.
 
@@ -93,7 +93,7 @@ fails the build.
   selectors in Page Objects over loosening assertions.
 - **Only chromium is active.** firefox/webkit projects are commented out in
   `playwright.config.ts`.
-- **The auth fixture's docstring is stale.** It describes a *worker-scoped*
+- **The auth fixture's docstring is stale.** It describes a _worker-scoped_
   fixture that saves/reuses `storageState` to avoid re-logging-in per test, but
   the live code is **test-scoped** with the storageState save/reuse commented
   out — so every test logs in through the UI. If you touch auth, reconcile the

@@ -4,7 +4,7 @@ import * as path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-const BASE_URL = process.env.BASE_URL ?? 'https://getdeals247.com';
+const BASE_URL = process.env.BASE_URL ?? 'https://get-deals.vercel.app';
 
 export default defineConfig({
   testDir: './tests',

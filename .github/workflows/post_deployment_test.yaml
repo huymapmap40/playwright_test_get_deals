@@ -1,0 +1,21 @@
+name: Post deployment test e2e get-deals.vercel.app
+on:
+  repository_dispatch:
+    types: [vercel-deploy-success]
+
+env:
+  BASE_URL: ${{github.event.client_payload.url}}
+  TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+  TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run test
+        run: |
+          yarn install
+          yarn playwright:install
+          yarn test --grep "@ID_1"

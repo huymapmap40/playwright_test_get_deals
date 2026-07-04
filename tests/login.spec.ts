@@ -12,7 +12,7 @@ baseTest.describe('Login flow (UI)', () => {
     const home = new HomePage(page);
     const login = new LoginPage(page);
 
-    await baseTest.step('navigate to getdeals247.com', async () => {
+    await baseTest.step('navigate to get-deals.vercel.app', async () => {
       await home.open();
       await home.expectLoaded();
     });
@@ -32,7 +32,7 @@ baseTest.describe('Login flow (UI)', () => {
     });
 
     await baseTest.step('verify back on homepage and user badge is shown', async () => {
-      await expect(page).toHaveURL(/getdeals247\.com/);
+      await expect(page).toHaveURL(/get-deals\.vercel\.app/);
       await home.expectUserLoggedIn();
     });
   });

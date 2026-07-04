@@ -63,7 +63,7 @@ const formatNotifyTestResult = (
 };
 
 const emoji = result === 'success' ? '✅' : result === 'failure' ? '❌' : '⚠️';
-const lines = [`${emoji} Playwright getdeals247 test run: *${result}*`];
+const lines = [`${emoji} Playwright get-deals test run: *${result}*`];
 if (runUrl) {
   lines.push(`<${runUrl}|View run>`);
 }
