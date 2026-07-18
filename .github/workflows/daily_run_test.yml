@@ -1,0 +1,29 @@
+name: Daily run test
+run-name: Daily run smoke test at ${{github.run_id}}
+
+on:
+  schedule:
+    - cron: '3 * * * *'
+      timezone: 'Asia/Ho_Chi_Minh'
+
+env:
+  TEST_USER_EMAIL: ${{secrets.TEST_USER_EMAIL}}
+  TEST_USER_PASSWORD: ${{secrets.TEST_USER_PASSWORD}}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies an browsers
+        run: |
+          yarn install
+          yarn playwright:install
+      - name: Check env var is configured
+        run: |
+          echo "Test email is: $TEST_USER_EMAIL"
+          echo "Test password is: $TEST_USER_PASSWORD"
+      - name: Run tests
+        run: |
+          yarn test --grep "@ID_1"

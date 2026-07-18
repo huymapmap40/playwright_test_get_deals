@@ -1,0 +1,107 @@
+name: Self-Heal Failing Tests
+run-name: Self-heal after ${{ github.event.workflow_run.name }} failed
+
+# Fires AFTER a test workflow finishes. We only proceed if it FAILED (guarded in
+# the job's `if:` below). We deliberately watch only the workflows that run with
+# NO human already in the loop — the scheduled/manual full run and the
+# post-deploy run. The PR workflow (run_test_and_check_pr) is intentionally
+# excluded: its failures already have a reviewer, and healing a PR could loop
+# (a bad heal PR fails its own CI, which would re-trigger the healer forever).
+on:
+  workflow_run:
+    workflows:
+      - "Trigger Test" # trigger_test.yml
+      - "Post deployment test e2e" # post_deployment_test.yaml
+    types:
+      - completed
+
+# One heal at a time per source branch; cancel superseded attempts.
+concurrency:
+  group: self-heal-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+env:
+  BASE_URL: https://get-deals.vercel.app
+  TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+  TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+  # Grep used to reproduce the failure. CI currently runs only @ID_1 everywhere;
+  # widen this as you widen coverage in the source workflows.
+  HEAL_GREP: "@ID_1"
+
+jobs:
+  heal:
+    name: Diagnose & self-heal
+    # Only act on a genuine failure — skip cancelled/skipped/success runs.
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the heal branch + commit the fix
+      pull-requests: write # open the heal PR
+      issues: write # open an issue when the SITE is broken (no code fix)
+      id-token: write # let claude-code-action mint the Claude GitHub App token
+      actions: read # read the triggering run's metadata
+    steps:
+      # Check out the exact commit that failed, so any fix is based on the code
+      # that was actually under test (not whatever moved on main since).
+      - name: Checkout failed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0 # full history so Claude can branch/commit/diff
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies and browsers
+        run: |
+          npm ci
+          npm run install:browsers
+
+      # Reproduce the failure to regenerate fresh evidence (trace, error-context,
+      # junit) in test-results/. `|| true` because we EXPECT this to fail — the
+      # whole point is to capture the failing state for the skill to read. If it
+      # unexpectedly passes, the skill will classify it as a flake and stop.
+      - name: Reproduce the failure
+        run: npx playwright test --grep "$HEAL_GREP" || true
+
+      - name: Run self-heal agent
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Same subscription auth as the PR-review workflow. No github_token is
+          # passed on purpose: the action mints a token from the Claude GitHub
+          # App via OIDC (needs the app installed + id-token: write), so the heal
+          # PR is authored by "claude" AND is able to trigger the normal test
+          # workflow for a real green re-check. (A GITHUB_TOKEN-authored PR would
+          # not trigger downstream workflows.)
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            A test run just failed and its failure has been reproduced locally in
+            this checkout. The failing workflow was
+            "${{ github.event.workflow_run.name }}"
+            (run: ${{ github.event.workflow_run.html_url }},
+            commit: ${{ github.event.workflow_run.head_sha }},
+            branch: ${{ github.event.workflow_run.head_branch }}).
+
+            Run the /analyze-ci-failed skill and follow it EXACTLY. The evidence
+            is in test-results/ (junit.xml, per-failure error-context.md and
+            trace.zip) and playwright-report/ from the reproduction step above.
+
+            Honor every guardrail in the skill:
+            - Only heal TEST DRIFT, and only by editing src/pages/*.ts.
+            - Never edit tests/, never weaken an assertion, never touch .env.
+            - If you heal, VERIFY with a real re-run + lint + typecheck, then open
+              a PR to main from a heal/ branch (never push to main, never merge).
+              The PR body must state the classification and the evidence.
+            - If the SITE is broken / a real bug / config, do NOT change code:
+              open a GitHub issue summarizing the evidence and stop.
+            - If it will not reproduce (flake), report that and open nothing.
+          # Tools the skill needs: inspect the repo, fix a Page Object, verify,
+          # and open a PR or an issue.
+          claude_args: |
+            --model claude-opus-4-8
+            --allowedTools "Read,Grep,Glob,Edit,Bash(git:*),Bash(gh pr create:*),Bash(gh issue create:*),Bash(npm run lint),Bash(npm run typecheck),Bash(npx playwright test:*),Bash(npx playwright show-trace:*)"
