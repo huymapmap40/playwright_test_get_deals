@@ -4,7 +4,6 @@ run-name: Daily run smoke test at ${{github.run_id}}
 on:
   schedule:
     - cron: '0/5 * * * *'
-      timezone: 'Asia/Ho_Chi_Minh'
 env:
   TEST_USER_EMAIL: ${{secrets.TEST_USER_EMAIL}}
   TEST_USER_PASSWORD: ${{secrets.TEST_USER_PASSWORD}}
