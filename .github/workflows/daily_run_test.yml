@@ -2,8 +2,8 @@ name: Daily run test
 run-name: Daily run smoke test at ${{github.run_id}}
 
 on:
-  schedule:
-    - cron: '0 8 * * *'
+  # schedule:
+  #   - cron: '0 8 * * *'
   workflow_dispatch:
 env:
   TEST_USER_EMAIL: ${{secrets.TEST_USER_EMAIL}}
